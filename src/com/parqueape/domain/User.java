@@ -1,12 +1,26 @@
 package com.parqueape.domain;
 
 import java.util.Date;
+
+import javax.persistence.Column;
+import javax.persistence.Entity;
+import javax.persistence.EnumType;
+import javax.persistence.Enumerated;
+import javax.persistence.GeneratedValue;
+import javax.persistence.GenerationType;
+import javax.persistence.Id;
+import javax.persistence.Table;
+import javax.persistence.Temporal;
+import javax.persistence.TemporalType;
 import javax.xml.bind.annotation.XmlElement;
 import javax.xml.bind.annotation.XmlRootElement;
 
 import org.json.JSONException;
 import org.json.JSONObject;
 
+
+@Entity
+@Table(name = "TB_USER")
 @XmlRootElement
 public class User {
 	
@@ -28,15 +42,27 @@ public class User {
 		return obj;
 	}
 	
+	@Id
+	@GeneratedValue(strategy=GenerationType.IDENTITY)
 	@XmlElement(name = "id")
 	private Long id;
+	
+	@Enumerated(EnumType.STRING)
 	@XmlElement(name = "role")
 	private EnumRole role;
+	
+	@Column(length=50)
 	@XmlElement(name = "email")
 	private String email;
+	
+	@Column(length=50)
 	private String password;
+	
+	@Column(length=1, columnDefinition="CHAR")
 	@XmlElement(name = "isActive")
 	private String isActive;
+	
+	@Temporal(TemporalType.TIMESTAMP)
 	@XmlElement(name = "createAt")
 	private Date createAt;
 	

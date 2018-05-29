@@ -2,7 +2,7 @@ package com.parqueape.domain;
 
 public enum EnumRole {
     admin_master, 
-    admin,
+    company,
     employee,
     user
 }
