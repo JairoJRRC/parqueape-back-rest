@@ -3,9 +3,13 @@ package com.parqueape.presentation;
 import java.util.Date;
 
 import javax.ws.rs.Consumes;
+import javax.ws.rs.DELETE;
 import javax.ws.rs.FormParam;
+import javax.ws.rs.GET;
 import javax.ws.rs.POST;
+import javax.ws.rs.PUT;
 import javax.ws.rs.Path;
+import javax.ws.rs.PathParam;
 import javax.ws.rs.Produces;
 import javax.ws.rs.core.MediaType;
 import javax.ws.rs.core.Response;
@@ -45,5 +49,52 @@ public class CompanyController {
 		Long companyId = CompanyService.create(company);
 		
 		return Response.status(200).entity(PresentationUtil.response("La empresa se registro correctamente.", new JSONObject().append("id", companyId))).build();		
+	}
+	
+	@PUT
+	@Path("/update/{id}")
+    @Consumes(MediaType.APPLICATION_FORM_URLENCODED)
+	@Produces("application/json")
+	public static Response update(
+			@FormParam("ruc") Integer ruc,
+			@FormParam("businessName") String businessName,
+			@FormParam("phoneNumber") String phoneNumber,
+			@FormParam("tradeName") String tradeName,
+			@PathParam("id") String id
+	) {
+		Company company = CompanyService.findById(Long.parseLong(id));
+		company.setRuc(ruc);
+		company.setBusinessName(businessName);
+		company.setPhoneNumber(phoneNumber);
+		company.setTradeName(tradeName);
+		CompanyService.update(company);
+		
+		return Response.status(200).entity(PresentationUtil.response("La empresa fue actualizada correctamente.", new JSONObject().append("id", company.getId()))).build();		
+	}
+	
+	@GET
+	@Path("/{userId}")
+    @Consumes(MediaType.APPLICATION_FORM_URLENCODED)
+	@Produces("application/json")
+	public static Response getByUserId(
+			@PathParam("userId") String userId
+	) {
+		Company company = CompanyService.findByUserId(Long.parseLong(userId));
+		JSONObject result = company.getObject();
+		
+		return Response.status(200).entity(PresentationUtil.response("La empresa fue actualizada correctamente.", result)).build();		
+	}
+	
+	
+	@DELETE
+	@Path("/{id}")
+    @Consumes(MediaType.APPLICATION_FORM_URLENCODED)
+	@Produces("application/json")
+	public static Response delete(
+			@PathParam("id") String id
+	) {
+		CompanyService.delete(Long.parseLong(id));
+		
+		return Response.status(200).entity(PresentationUtil.response("La empresa se eliminó correctamente.", new JSONObject())).build();		
 	}
 }

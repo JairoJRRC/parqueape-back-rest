@@ -1,13 +1,9 @@
 package com.parqueape.domain;
 
 import java.io.Serializable;
-import java.util.ArrayList;
-import java.util.Date;
-import java.util.List;
+import java.util.Set;
 
-import javax.persistence.CascadeType;
 import javax.persistence.Column;
-import javax.persistence.FetchType;
 import javax.persistence.Entity;
 import javax.persistence.GeneratedValue;
 import javax.persistence.GenerationType;
@@ -16,35 +12,53 @@ import javax.persistence.JoinColumn;
 import javax.persistence.ManyToOne;
 import javax.persistence.OneToMany;
 import javax.persistence.Table;
+import javax.xml.bind.annotation.XmlElement;
+import javax.xml.bind.annotation.XmlRootElement;
 
 @Entity
-@Table(name="TB_COCHERA")
+@Table(name = "TB_COCHERA")
+@XmlRootElement
 public class Garage implements Serializable {
 
 	@Id
-	@GeneratedValue(strategy=GenerationType.IDENTITY)
+	@GeneratedValue(strategy = GenerationType.IDENTITY)
+	@XmlElement(name = "id")
 	private Long id;
-	
-	@Column(length=50)
+
+	@Column(length = 50)
+	@XmlElement(name = "title")
 	private String title;
-	
-	@Column(length=50)
+
+	@Column(length = 50)
+	@XmlElement(name = "coordinates")
 	private String coordinates;
-	
-	@Column(length=50)
+
+	@Column(length = 50)
+	@XmlElement(name = "address")
 	private String address;
-	
-	@Column(length=50)
+
+	@Column(length = 50)
+	@XmlElement(name = "photo")
 	private String photo;
 
- 	@ManyToOne(fetch = FetchType.LAZY)
-    @JoinColumn(name = "company_id")
+	@ManyToOne
+	@JoinColumn(name = "company_id", nullable = false)
 	private Company company;
-	
+
 	@OneToMany(mappedBy = "garage")
-	private List<Site> sites = new ArrayList<Site>();
+	private Set<Site> sites;
 
 	public Garage() {
+	}
+
+	public static Garage create(String title, String coordinates, String address, String photo, Company company) {
+		Garage garage = new Garage();
+		garage.title = title;
+		garage.coordinates = coordinates;
+		garage.address = address;
+		garage.photo = photo;
+		garage.company = company;
+		return garage;
 	}
 
 	public Long getId() {
@@ -95,13 +109,11 @@ public class Garage implements Serializable {
 		this.company = company;
 	}
 
-	public List<Site> getSites() {
+	public Set<Site> getSites() {
 		return sites;
 	}
 
-	public void setSites(List<Site> sites) {
+	public void setSites(Set<Site> sites) {
 		this.sites = sites;
 	}
-	
-	
 }

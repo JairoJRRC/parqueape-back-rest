@@ -1,9 +1,7 @@
 package com.parqueape.domain;
 
 import java.io.Serializable;
-import java.util.ArrayList;
-import java.util.Date;
-import java.util.List;
+import java.util.Set;
 
 import javax.persistence.Column;
 import javax.persistence.Entity;
@@ -27,9 +25,6 @@ public class Company implements Serializable{
 	@GeneratedValue(strategy = GenerationType.IDENTITY)
 	@XmlElement(name = "id")
 	private Long id;
-
-	//@OneToMany(mappedBy = "company")
-	//private List<Garage> garages = new ArrayList<Garage>();
 	
 	@Column(length=11)
 	@XmlElement(name = "ruc")
@@ -49,6 +44,12 @@ public class Company implements Serializable{
 	@Column
 	@XmlElement(name = "userId")
 	private Long userId;
+	
+	@OneToMany(mappedBy = "company")
+	private Set<Garage> garages;
+	
+	@OneToMany(mappedBy = "company")
+	private Set<Employee> employees;
 
 	public Company() {
 	}
@@ -113,7 +114,23 @@ public class Company implements Serializable{
 		this.userId = userId;
 	}
 	
-    public JSONObject getObject() {
+    public Set<Garage> getGarages() {
+		return garages;
+	}
+
+	public void setGarages(Set<Garage> garages) {
+		this.garages = garages;
+	}
+
+	public Set<Employee> getEmployees() {
+		return employees;
+	}
+
+	public void setEmployees(Set<Employee> employees) {
+		this.employees = employees;
+	}
+
+	public JSONObject getObject() {
             try {
             	
             	JSONObject obj = new JSONObject();
