@@ -1,4 +1,4 @@
-package com.parqueape.presentation;
+package com.parqueape.infrastructure;
 
 import java.util.List;
 
@@ -16,25 +16,21 @@ import org.json.JSONObject;
 import com.parqueape.application.AuthenticationFactory;
 import com.parqueape.application.CompanyService;
 import com.parqueape.application.UserService;
+import com.parqueape.domain.EnumRole;
 import com.parqueape.domain.User;
-import com.parqueape.infrastructure.PresentationUtil;
 
 @Path("/login")
 public class AuthenticationController {
-	
-	static final String ROLE_ADMIN = "admin";
-	static final String ROLE_COMPANY = "company";
-	static final String ROLE_EMPLOYEE = "employee";
 
 	static AuthenticationFactory factory;
 
-	public static AuthenticationFactory authentication(String role) {
+	public static AuthenticationFactory authentication(EnumRole role) {
 
 		switch (role) {
-		case ROLE_COMPANY:
+		case COMPANY:
 			factory = new CompanyService();
 			break;
-		case ROLE_EMPLOYEE:
+		case ADMIN:
 		default:
 			break;
 		}
@@ -46,7 +42,7 @@ public class AuthenticationController {
 	@Produces("application/json")
 	public static Response authentication(@FormParam("email") String email, @FormParam("password") String password) throws Exception {
 		
-		String role = getRoleByUser(email, password);
+		EnumRole role = getRoleByUser(email, password);
 		
 		AuthenticationFactory factory = authentication(role);
 		User registeredUser = factory.isValidUser(email, password);
@@ -59,9 +55,9 @@ public class AuthenticationController {
 
 	}
 
-	public static String getRoleByUser(String email, String password) {
+	public static EnumRole getRoleByUser(String email, String password) {
 		User user = null;
 		user = UserService.findByEmailAndPassword(email, password);
-		return user.getRole().toString();
+		return user.getRole();
 	}
 }

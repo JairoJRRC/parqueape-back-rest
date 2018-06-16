@@ -1,4 +1,4 @@
-package com.parqueape.presentation;
+package com.parqueape.infrastructure;
 
 import java.util.Date;
 import javax.ws.rs.GET;
@@ -15,9 +15,6 @@ import com.parqueape.domain.EnumRole;
 import com.parqueape.domain.Garage;
 import com.parqueape.domain.Site;
 import com.parqueape.domain.User;
-import com.parqueape.infrastructure.EnumState;
-import com.parqueape.infrastructure.EnumTurn;
-import com.parqueape.infrastructure.EnumTypeDoc;
 
 @Path("/data")
 public class UserController {
@@ -25,7 +22,7 @@ public class UserController {
 	@GET
 	public static String data() {
 
-		User us = User.create(EnumRole.company, "jairo_rafa1997@hotmail.com", "12345678", new Date());
+		User us = User.create(EnumRole.COMPANY, "jairo_rafa1997@hotmail.com", "12345678", new Date());
 
 		Long id = UserService.create(us);
 	

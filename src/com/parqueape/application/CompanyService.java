@@ -61,7 +61,8 @@ public class CompanyService extends AuthenticationFactory{
 
 	public static Company findById(Long id) {
 		Session session = HibernateUtil.getSessionFactory().openSession();
-		Company c = (Company) session.load(Company.class, id);
+		session.beginTransaction();
+		Company c = (Company) session.get(Company.class, id);
 		session.close();
 		return c;
 	}
@@ -74,7 +75,7 @@ public class CompanyService extends AuthenticationFactory{
 		query.setParameter("id", id);
 		
 		Company company= (Company) query.uniqueResult();
-		
+		session.close();
 		return company;
 	}
 

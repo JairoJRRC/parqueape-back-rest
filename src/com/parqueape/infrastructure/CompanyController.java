@@ -1,4 +1,4 @@
-package com.parqueape.presentation;
+package com.parqueape.infrastructure;
 
 import java.util.Date;
 
@@ -21,7 +21,6 @@ import com.parqueape.application.UserService;
 import com.parqueape.domain.Company;
 import com.parqueape.domain.EnumRole;
 import com.parqueape.domain.User;
-import com.parqueape.infrastructure.PresentationUtil;
 
 @Path("/company")
 public class CompanyController {
@@ -30,7 +29,6 @@ public class CompanyController {
 	private static Company company = null;
 	
 	@POST
-	@Path("/register")
     @Consumes(MediaType.APPLICATION_FORM_URLENCODED)
 	@Produces("application/json")
 	public static Response register(
@@ -42,7 +40,7 @@ public class CompanyController {
 			@FormParam("tradeName") String tradeName
 	) {
 		
-		user = User.create(EnumRole.company, email, password, new Date());
+		user = User.create(EnumRole.COMPANY, email, password, new Date());
 		Long userId = UserService.create(user);
 		
 		company = Company.create(ruc, businessName, phoneNumber, tradeName, userId);
@@ -52,7 +50,7 @@ public class CompanyController {
 	}
 	
 	@PUT
-	@Path("/update/{id}")
+	@Path("/{id}")
     @Consumes(MediaType.APPLICATION_FORM_URLENCODED)
 	@Produces("application/json")
 	public static Response update(
@@ -62,6 +60,7 @@ public class CompanyController {
 			@FormParam("tradeName") String tradeName,
 			@PathParam("id") String id
 	) {
+		
 		Company company = CompanyService.findById(Long.parseLong(id));
 		company.setRuc(ruc);
 		company.setBusinessName(businessName);
@@ -69,11 +68,12 @@ public class CompanyController {
 		company.setTradeName(tradeName);
 		CompanyService.update(company);
 		
+		
 		return Response.status(200).entity(PresentationUtil.response("La empresa fue actualizada correctamente.", new JSONObject().append("id", company.getId()))).build();		
 	}
 	
 	@GET
-	@Path("/{userId}")
+	@Path("/user/{userId}")
     @Consumes(MediaType.APPLICATION_FORM_URLENCODED)
 	@Produces("application/json")
 	public static Response getByUserId(
@@ -82,7 +82,20 @@ public class CompanyController {
 		Company company = CompanyService.findByUserId(Long.parseLong(userId));
 		JSONObject result = company.getObject();
 		
-		return Response.status(200).entity(PresentationUtil.response("La empresa fue actualizada correctamente.", result)).build();		
+		return Response.status(200).entity(PresentationUtil.response("La empresa se obtuvo correctamente.", result)).build();		
+	}
+	
+	@GET
+	@Path("/{id}")
+    @Consumes(MediaType.APPLICATION_FORM_URLENCODED)
+	@Produces("application/json")
+	public static Response get(
+			@PathParam("id") String id
+	) {
+		Company company = CompanyService.findById(Long.parseLong(id));
+		JSONObject result = company.getObject();
+		
+		return Response.status(200).entity(PresentationUtil.response("LLa empresa se obtuvo correctamente.", result)).build();		
 	}
 	
 	
