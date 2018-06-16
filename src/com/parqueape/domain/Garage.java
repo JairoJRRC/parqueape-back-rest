@@ -1,10 +1,12 @@
 package com.parqueape.domain;
 
 import java.io.Serializable;
-import java.util.Set;
+import java.util.Collection;
 
+import javax.persistence.CascadeType;
 import javax.persistence.Column;
 import javax.persistence.Entity;
+import javax.persistence.FetchType;
 import javax.persistence.GeneratedValue;
 import javax.persistence.GenerationType;
 import javax.persistence.Id;
@@ -14,6 +16,9 @@ import javax.persistence.OneToMany;
 import javax.persistence.Table;
 import javax.xml.bind.annotation.XmlElement;
 import javax.xml.bind.annotation.XmlRootElement;
+
+import org.json.JSONException;
+import org.json.JSONObject;
 
 @Entity
 @Table(name = "TB_COCHERA")
@@ -33,11 +38,11 @@ public class Garage implements Serializable {
 	@XmlElement(name = "coordinates")
 	private String coordinates;
 
-	@Column(length = 50)
+	@Column(length = 500)
 	@XmlElement(name = "address")
 	private String address;
 
-	@Column(length = 50)
+	@Column(length = 500)
 	@XmlElement(name = "photo")
 	private String photo;
 
@@ -45,8 +50,8 @@ public class Garage implements Serializable {
 	@JoinColumn(name = "company_id", nullable = false)
 	private Company company;
 
-	@OneToMany(mappedBy = "garage")
-	private Set<Site> sites;
+	@OneToMany(fetch = FetchType.EAGER, mappedBy = "garage", cascade = CascadeType.ALL)
+	private Collection<Site> sites;
 
 	public Garage() {
 	}
@@ -109,11 +114,32 @@ public class Garage implements Serializable {
 		this.company = company;
 	}
 
-	public Set<Site> getSites() {
+	
+	
+	public Collection<Site> getSites() {
 		return sites;
 	}
 
-	public void setSites(Set<Site> sites) {
+	public void setSites(Collection<Site> sites) {
 		this.sites = sites;
 	}
+
+	public JSONObject getObject() {
+        try {
+        	
+        	JSONObject obj = new JSONObject();
+        	
+        	obj.put("id", id);
+			obj.put("title", title);
+			obj.put("coordinates", coordinates);
+			obj.put("address", address);
+			obj.put("photo", photo);
+			obj.put("company", company);
+			obj.put("sites", sites);
+            
+            return new JSONObject().put("garage", obj);
+        } catch (JSONException e) {
+                return null;
+        }
+}
 }

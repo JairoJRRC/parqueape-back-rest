@@ -5,6 +5,8 @@ import java.util.Date;
 
 import javax.persistence.Column;
 import javax.persistence.Entity;
+import javax.persistence.EnumType;
+import javax.persistence.Enumerated;
 import javax.persistence.GeneratedValue;
 import javax.persistence.GenerationType;
 import javax.persistence.Id;
@@ -45,10 +47,12 @@ public class Employee implements Serializable{
 	private Date dateRetirement;
 
 	@Column
+	@Enumerated(EnumType.STRING)
 	@XmlElement(name = "state")
 	private EnumState state;
 
 	@Column
+	@Enumerated(EnumType.STRING)
 	@XmlElement(name = "turn")
 	private EnumTurn turn;
 
@@ -65,6 +69,7 @@ public class Employee implements Serializable{
 	private String lastNames;
 
 	@Column
+	@Enumerated(EnumType.STRING)
 	@XmlElement(name = "typeDoc")
 	private EnumTypeDoc typeDoc;
 
@@ -79,13 +84,17 @@ public class Employee implements Serializable{
 	@ManyToOne
 	@JoinColumn(name = "company_id", nullable = false)
 	private Company company;
+	
+	@Column
+	@XmlElement(name = "userId")
+	private Long userId;
 
 	public Employee() {
 	}
 
 	public static Employee create(Date dateEntry, Float salary, Date dateRetirement, EnumTurn turn,
 			String bankAccountNumber, String names, String lastNames, EnumTypeDoc typeDoc, String numDoc, String photo,
-			Company company) {
+			Company company, Long userId) {
 		Employee employee = new Employee();
 		employee.dateEntry = dateEntry;
 		employee.salary = salary;
@@ -99,6 +108,7 @@ public class Employee implements Serializable{
 		employee.numDoc = numDoc;
 		employee.photo = photo;
 		employee.company = company;
+		employee.userId = userId;
 		return employee;
 	}
 
@@ -204,5 +214,13 @@ public class Employee implements Serializable{
 
 	public void setCompany(Company company) {
 		this.company = company;
+	}
+
+	public Long getUserId() {
+		return userId;
+	}
+
+	public void setUserId(Long userId) {
+		this.userId = userId;
 	}
 }
