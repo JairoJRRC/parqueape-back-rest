@@ -15,6 +15,7 @@ import org.json.JSONObject;
 
 import com.parqueape.application.AuthenticationFactory;
 import com.parqueape.application.CompanyService;
+import com.parqueape.application.EmployeeService;
 import com.parqueape.application.UserService;
 import com.parqueape.domain.EnumRole;
 import com.parqueape.domain.User;
@@ -29,6 +30,9 @@ public class AuthenticationController {
 		switch (role) {
 		case COMPANY:
 			factory = new CompanyService();
+			break;
+		case EMPLOYEE:
+			factory = new EmployeeService();
 			break;
 		case ADMIN:
 		default:

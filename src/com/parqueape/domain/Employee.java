@@ -15,8 +15,11 @@ import javax.persistence.ManyToOne;
 import javax.persistence.Table;
 import javax.persistence.Temporal;
 import javax.persistence.TemporalType;
-import javax.xml.bind.annotation.XmlElement;
 import javax.xml.bind.annotation.XmlRootElement;
+
+import org.hibernate.annotations.Type;
+import org.json.JSONException;
+import org.json.JSONObject;
 
 import com.parqueape.infrastructure.EnumState;
 import com.parqueape.infrastructure.EnumTurn;
@@ -29,56 +32,45 @@ public class Employee implements Serializable{
 
 	@Id
 	@GeneratedValue(strategy = GenerationType.IDENTITY)
-	@XmlElement(name = "id")
 	private Long id;
 
 	@Column
 	@Temporal(TemporalType.DATE)
-	@XmlElement(name = "dateEntry")
 	private Date dateEntry;
 
 	@Column(precision = 2)
-	@XmlElement(name = "salary")
 	private Float salary;
 
 	@Column
 	@Temporal(TemporalType.DATE)
-	@XmlElement(name = "dateRetirement")
 	private Date dateRetirement;
 
 	@Column
 	@Enumerated(EnumType.STRING)
-	@XmlElement(name = "state")
 	private EnumState state;
 
 	@Column
 	@Enumerated(EnumType.STRING)
-	@XmlElement(name = "turn")
 	private EnumTurn turn;
 
 	@Column
-	@XmlElement(name = "bankAccountNumb")
 	private String bankAccountNumber;
 
 	@Column(length = 50)
-	@XmlElement(name = "names")
 	private String names;
 
 	@Column(length = 50)
-	@XmlElement(name = "lastNames")
 	private String lastNames;
 
 	@Column
 	@Enumerated(EnumType.STRING)
-	@XmlElement(name = "typeDoc")
 	private EnumTypeDoc typeDoc;
 
 	@Column(length = 20)
-	@XmlElement(name = "numDoc")
 	private String numDoc;
 
-	@Column(length = 50)
-	@XmlElement(name = "photo")
+	@Column
+	@Type(type="text")
 	private String photo;
 
 	@ManyToOne
@@ -86,7 +78,6 @@ public class Employee implements Serializable{
 	private Company company;
 	
 	@Column
-	@XmlElement(name = "userId")
 	private Long userId;
 
 	public Employee() {
@@ -223,4 +214,29 @@ public class Employee implements Serializable{
 	public void setUserId(Long userId) {
 		this.userId = userId;
 	}
+	
+	public JSONObject getObject() {
+        try {
+        	
+        	JSONObject obj = new JSONObject();
+        	obj.put("id",getId());
+			obj.put("dateEntry",getDateEntry());
+			obj.put("salary",getSalary());
+			obj.put("dateRetirement",getDateRetirement());
+			obj.put("state",getState());
+			obj.put("turn",getTurn());
+			obj.put("bankAccountNumber",getBankAccountNumber());
+			obj.put("names",getNames());
+			obj.put("lastNames",getLastNames());
+			obj.put("typeDoc",getTypeDoc());
+			obj.put("numDoc",getNumDoc());
+			obj.put("photo",getPhoto());
+			obj.put("companyId",getCompany().getId());
+			obj.put("userId",getUserId());
+            
+            return new JSONObject().put("employee", obj);
+        } catch (JSONException e) {
+                return null;
+        }
+}
 }

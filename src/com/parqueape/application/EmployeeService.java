@@ -10,7 +10,7 @@ import com.parqueape.domain.Employee;
 import com.parqueape.domain.User;
 import com.parqueape.infrastructure.HibernateUtil;
 
-public class EmployeeService {
+public class EmployeeService extends AuthenticationFactory {
 	public static Long create(Employee e) {
 		Session session = HibernateUtil.getSessionFactory().openSession();
 		session.beginTransaction();
@@ -82,6 +82,12 @@ public class EmployeeService {
 		Employee employee= (Employee) query.uniqueResult();
 		
 		return employee;
+	}
+
+	@Override
+	public JSONObject getDataUser(User user) {
+		Employee emp = findByUserId(user.getId());
+		return emp.getObject();
 	}
 
 	
