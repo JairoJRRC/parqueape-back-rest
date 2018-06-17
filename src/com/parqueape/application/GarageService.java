@@ -22,7 +22,7 @@ public class GarageService {
 	public static List<Garage> getGarageByCompany(Long companyId) {
 		Session session = HibernateUtil.getSessionFactory().openSession();
 		@SuppressWarnings("unchecked")
-		Query query = session.createQuery("from Company where companyId = :companyId");
+		Query query = session.createQuery("from Garage where company.id = :companyId");
 		query.setParameter("companyId", companyId);
 		List<Garage> garages = query.list();
 		session.close();

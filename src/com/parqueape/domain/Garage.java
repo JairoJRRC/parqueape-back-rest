@@ -17,33 +17,28 @@ import javax.persistence.Table;
 import javax.xml.bind.annotation.XmlElement;
 import javax.xml.bind.annotation.XmlRootElement;
 
+import org.json.JSONArray;
 import org.json.JSONException;
 import org.json.JSONObject;
 
 @Entity
 @Table(name = "TB_COCHERA")
-@XmlRootElement
 public class Garage implements Serializable {
 
 	@Id
 	@GeneratedValue(strategy = GenerationType.IDENTITY)
-	@XmlElement(name = "id")
 	private Long id;
 
 	@Column(length = 50)
-	@XmlElement(name = "title")
 	private String title;
 
 	@Column(length = 50)
-	@XmlElement(name = "coordinates")
 	private String coordinates;
 
 	@Column(length = 500)
-	@XmlElement(name = "address")
 	private String address;
 
 	@Column(length = 500)
-	@XmlElement(name = "photo")
 	private String photo;
 
 	@ManyToOne
@@ -123,21 +118,33 @@ public class Garage implements Serializable {
 	public void setSites(Collection<Site> sites) {
 		this.sites = sites;
 	}
-
+	
 	public JSONObject getObject() {
         try {
         	
-        	JSONObject obj = new JSONObject();
-        	
-        	obj.put("id", id);
-			obj.put("title", title);
-			obj.put("coordinates", coordinates);
-			obj.put("address", address);
-			obj.put("photo", photo);
-			obj.put("company", company);
-			obj.put("sites", sites);
+        	JSONObject objGarage = new JSONObject();
+    		objGarage.put("id", getId());
+    		objGarage.put("title", getTitle());
+    		objGarage.put("coordinates", getCoordinates());
+    		objGarage.put("address", getAddress());
+    		objGarage.put("photo", getPhoto());
+
+    		if (getSites().size() > 0) {
+
+    			JSONArray arrSite = new JSONArray();
+
+    			for (Site site : getSites()) {
+    				JSONObject objSite = new JSONObject();
+    				objSite.put("id", site.getId());
+    				objSite.put("status", site.getStatus());
+
+    				arrSite.put(objSite);
+    			}
+
+    			objGarage.put("sites", arrSite);
+    		}
             
-            return new JSONObject().put("garage", obj);
+            return objGarage;
         } catch (JSONException e) {
                 return null;
         }
