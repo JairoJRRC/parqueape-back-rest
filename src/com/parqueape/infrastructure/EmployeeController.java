@@ -40,13 +40,21 @@ public class EmployeeController {
 	@POST
 	@Consumes(MediaType.APPLICATION_FORM_URLENCODED)
 	@Produces("application/json")
-	public static Response register(@FormParam("email") String email, @FormParam("password") String password,
-			@FormParam("dateEntry") String init, @FormParam("salary") String payment,
-			@FormParam("dateRetirement") String finish, @FormParam("turn") String turns,
-			@FormParam("bankAccountNumber") String bankAccountNumber, @FormParam("names") String names,
-			@FormParam("lastNames") String lastNames, @FormParam("typeDoc") EnumTypeDoc typeDoc,
-			@FormParam("numDoc") String numDoc, @FormParam("photo") String photo,
-			@FormParam("companyId") String companyId) {
+	public static Response register(
+			@FormParam("email") String email,
+			@FormParam("password") String password,
+			@FormParam("dateEntry") String init,
+			@FormParam("salary") String payment,
+			@FormParam("dateRetirement") String finish,
+			@FormParam("turn") String turns,
+			@FormParam("bankAccountNumber") String bankAccountNumber,
+			@FormParam("names") String names,
+			@FormParam("lastNames") String lastNames,
+			@FormParam("typeDoc") String typeDoc,
+			@FormParam("numDoc") String numDoc,
+			@FormParam("photo") String photo,
+			@FormParam("companyId") String companyId
+	) {
 		DateFormat inputFormat = new SimpleDateFormat("yyyy-MM-dd");
 
 		Date dateEntry;
@@ -69,11 +77,11 @@ public class EmployeeController {
 		Company company = CompanyService.findById(Long.parseLong(companyId));
 
 		Employee employee = Employee.create(dateEntry, salary, dateRetirement, turn, bankAccountNumber, names,
-				lastNames, typeDoc, numDoc, photo, company, userId);
+				lastNames, EnumTypeDoc.getRole(typeDoc), numDoc, photo, company, userId);
 		Long employeeId = EmployeeService.create(employee);
 
 		return Response.status(200).entity(PresentationUtil.response("La empleado se registro correctamente.",
-				new JSONObject().append("id", employeeId))).build();
+				new JSONObject().append("id", employeeId))).header("Access-Control-Allow-Origin", "*").build();
 	}
 	
 	@PUT
@@ -81,17 +89,57 @@ public class EmployeeController {
     @Consumes(MediaType.APPLICATION_FORM_URLENCODED)
 	@Produces("application/json")
 	public static Response update(
-			@FormParam("dateEntry") String init, @FormParam("salary") String payment,
-			@FormParam("dateRetirement") String finish, @FormParam("turn") String turns,
-			@FormParam("bankAccountNumber") String bankAccountNumber, @FormParam("names") String names,
-			@FormParam("lastNames") String lastNames, @FormParam("typeDoc") EnumTypeDoc typeDoc,
-			@FormParam("numDoc") String numDoc, @FormParam("photo") String photo,
-			@FormParam("companyId") String companyId, @PathParam("id") String id
+			@FormParam("dateEntry") String init,
+			@FormParam("salary") String payment,
+			@FormParam("dateRetirement") String finish,
+			@FormParam("state") String state,
+			@FormParam("turn") String turns,
+			@FormParam("bankAccountNumber") String bankAccountNumber,
+			@FormParam("names") String names,
+			@FormParam("lastNames") String lastNames,
+			@FormParam("typeDoc") String typeDoc,
+			@FormParam("numDoc") String numDoc,
+			@FormParam("photo") String photo,
+			@FormParam("companyId") String companyId,
+			@PathParam("id") String id
 	) {
+
+		DateFormat inputFormat = new SimpleDateFormat("yyyy-MM-dd");
+
+		Date dateEntry;
+		Date dateRetirement;
+
+		try {
+			dateEntry = inputFormat.parse(init);
+			dateRetirement = inputFormat.parse(finish);
+		} catch (ParseException e) {
+			return Response.status(400).entity(PresentationUtil.response(e.getMessage().toString(), new JSONObject()))
+					.build();
+		}
 		
 		Employee employee = EmployeeService.findById(Long.parseLong(id));
+		System.out.println("se obtuvo empleado");
+		System.out.println(employee.getBankAccountNumber());
+		employee.setDateEntry(dateEntry);
+		employee.setSalary(Float.parseFloat(payment));
+		employee.setDateRetirement(dateRetirement);
+		employee.setState(EnumState.getRole(turns));
+		employee.setTurn(EnumTurn.getRole(turns));
+		employee.setBankAccountNumber(bankAccountNumber);
+		employee.setNames(names);
+		employee.setLastNames(lastNames);
+		employee.setTypeDoc(EnumTypeDoc.getRole(typeDoc));
+		employee.setNumDoc(numDoc);
+		employee.setPhoto(photo);
+		System.out.println("se seteo empleado");
+		System.out.println(bankAccountNumber);
 		EmployeeService.update(employee);
-		return Response.status(200).entity(PresentationUtil.response("El empleado fue actualizado correctamente.", new JSONObject().append("id", employee.getId()))).build();		
+		System.out.println("Se actualizo.");
+		
+		return Response.status(200)
+				.entity(PresentationUtil.response("El empleado fue actualizado correctamente.",
+						new JSONObject().append("id", employee.getId())))
+				.header("Access-Control-Allow-Origin", "*").build();		
 	}
 
 	@POST
@@ -118,7 +166,7 @@ public class EmployeeController {
 		path.put("img", fileDetail.getFileName());
 
 		return Response.status(200).entity(PresentationUtil.response("La imagen se ha subido correctamente.", path))
-				.build();
+				.header("Access-Control-Allow-Origin", "*").build();
 
 	}
 

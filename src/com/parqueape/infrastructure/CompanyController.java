@@ -34,8 +34,7 @@ public class CompanyController {
 	public static Response register(
 			@FormParam("email") String email,
 			@FormParam("password") String password,
-			@FormParam("ruc") Integer ruc,
-			@FormParam("businessName") String businessName,
+			@FormParam("ruc") String ruc,
 			@FormParam("phoneNumber") String phoneNumber,
 			@FormParam("tradeName") String tradeName
 	) {
@@ -43,10 +42,11 @@ public class CompanyController {
 		user = User.create(EnumRole.COMPANY, email, password, new Date());
 		Long userId = UserService.create(user);
 		
-		company = Company.create(ruc, businessName, phoneNumber, tradeName, userId);
+		company = Company.create(Integer.parseInt(ruc), phoneNumber, tradeName, userId);
 		Long companyId = CompanyService.create(company);
 		
-		return Response.status(200).entity(PresentationUtil.response("La empresa se registro correctamente.", new JSONObject().append("id", companyId))).build();		
+		return Response.status(200).entity(PresentationUtil.response("La empresa se registro correctamente.",
+				new JSONObject().append("id", companyId))).header("Access-Control-Allow-Origin", "*").build();		
 	}
 	
 	@PUT
@@ -55,7 +55,6 @@ public class CompanyController {
 	@Produces("application/json")
 	public static Response update(
 			@FormParam("ruc") Integer ruc,
-			@FormParam("businessName") String businessName,
 			@FormParam("phoneNumber") String phoneNumber,
 			@FormParam("tradeName") String tradeName,
 			@PathParam("id") String id
@@ -63,13 +62,15 @@ public class CompanyController {
 		
 		Company company = CompanyService.findById(Long.parseLong(id));
 		company.setRuc(ruc);
-		company.setBusinessName(businessName);
 		company.setPhoneNumber(phoneNumber);
 		company.setTradeName(tradeName);
 		CompanyService.update(company);
 		
 		
-		return Response.status(200).entity(PresentationUtil.response("La empresa fue actualizada correctamente.", new JSONObject().append("id", company.getId()))).build();		
+		return Response.status(200)
+				.entity(PresentationUtil.response("La empresa fue actualizada correctamente.",
+						new JSONObject().append("id", company.getId())))
+				.header("Access-Control-Allow-Origin", "*").build();		
 	}
 	
 	@GET
@@ -82,7 +83,8 @@ public class CompanyController {
 		Company company = CompanyService.findByUserId(Long.parseLong(userId));
 		JSONObject result = company.getObject();
 		
-		return Response.status(200).entity(PresentationUtil.response("La empresa se obtuvo correctamente.", result)).build();		
+		return Response.status(200).entity(PresentationUtil.response("La empresa se obtuvo correctamente.", result))
+				.header("Access-Control-Allow-Origin", "*").build();		
 	}
 	
 	@GET
@@ -95,7 +97,8 @@ public class CompanyController {
 		Company company = CompanyService.findById(Long.parseLong(id));
 		JSONObject result = company.getObject();
 		
-		return Response.status(200).entity(PresentationUtil.response("LLa empresa se obtuvo correctamente.", result)).build();		
+		return Response.status(200).entity(PresentationUtil.response("LLa empresa se obtuvo correctamente.", result))
+				.header("Access-Control-Allow-Origin", "*").build();		
 	}
 	
 	
@@ -108,6 +111,8 @@ public class CompanyController {
 	) {
 		CompanyService.delete(Long.parseLong(id));
 		
-		return Response.status(200).entity(PresentationUtil.response("La empresa se eliminó correctamente.", new JSONObject())).build();		
+		return Response.status(200)
+				.entity(PresentationUtil.response("La empresa se eliminó correctamente.", new JSONObject()))
+				.header("Access-Control-Allow-Origin", "*").build();		
 	}
 }

@@ -6,6 +6,7 @@ import org.hibernate.Query;
 import org.hibernate.Session;
 import org.json.JSONObject;
 
+import com.parqueape.domain.Company;
 import com.parqueape.domain.Employee;
 import com.parqueape.domain.User;
 import com.parqueape.infrastructure.HibernateUtil;
@@ -64,9 +65,10 @@ public class EmployeeService extends AuthenticationFactory {
 		session.close();
 		System.out.println("Successfully deleted " + employee.toString());
 	}
-
+	
 	public static Employee findById(Long id) {
 		Session session = HibernateUtil.getSessionFactory().openSession();
+		session.beginTransaction();
 		Employee c = (Employee) session.load(Employee.class, id);
 		session.close();
 		return c;

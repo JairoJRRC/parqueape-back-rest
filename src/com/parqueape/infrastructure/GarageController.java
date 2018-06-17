@@ -41,7 +41,7 @@ public class GarageController {
 		Long garageId = GarageService.create(garage);
 
 		return Response.status(200).entity(PresentationUtil.response("La cochera fue creada exitosamente.",
-				new JSONObject().append("id", garageId))).build();
+				new JSONObject().append("id", garageId))).header("Access-Control-Allow-Origin", "*").build();
 	}
 
 	@PUT
@@ -58,8 +58,10 @@ public class GarageController {
 		garage.setPhoto(photo);
 		GarageService.update(garage);
 
-		return Response.status(200).entity(PresentationUtil.response("La cochera se actualizo correctamente.",
-				new JSONObject().append("id", garage.getId()))).build();
+		return Response.status(200)
+				.entity(PresentationUtil.response("La cochera se actualizo correctamente.",
+						new JSONObject().append("id", garage.getId())))
+				.header("Access-Control-Allow-Origin", "*").build();
 	}
 
 	@GET
@@ -69,8 +71,10 @@ public class GarageController {
 	public static Response getByUserId(@PathParam("id") String id) {
 
 		Garage garage = GarageService.findById(Long.parseLong(id));
-		return Response.status(200).entity(PresentationUtil.response("La cochera se obtuvo correctamente.",
-				new JSONObject().put("garage", garage.getObject()))).build();
+		return Response.status(200)
+				.entity(PresentationUtil.response("La cochera se obtuvo correctamente.",
+						new JSONObject().put("garage", garage.getObject())))
+				.header("Access-Control-Allow-Origin", "*").build();
 	}
 
 	@GET
@@ -92,7 +96,7 @@ public class GarageController {
 		}
 
 		return Response.status(200).entity(PresentationUtil.response("Se obtuvo la lista de cocheras correctamente.",
-				new JSONObject().put("garages", arrGarage))).build();
+				new JSONObject().put("garages", arrGarage))).header("Access-Control-Allow-Origin", "*").build();
 	}
 	
 	@DELETE
@@ -104,7 +108,9 @@ public class GarageController {
 	) {
 		GarageService.delete(Long.parseLong(id));
 		
-		return Response.status(200).entity(PresentationUtil.response("La cochera se eliminó correctamente.", new JSONObject())).build();		
+		return Response.status(200)
+				.entity(PresentationUtil.response("La cochera se eliminó correctamente.", new JSONObject()))
+				.header("Access-Control-Allow-Origin", "*").build();		
 	}
 
 }

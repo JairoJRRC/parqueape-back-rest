@@ -34,7 +34,7 @@ public class UserController {
 		System.out.println("---------------------USUARIO CREADO-------------------------");
 		System.out.println("-------------------------------------------------------------------");
 	
-		Company c = Company.create(1235678978, "Tecnología", "922031342", "Jairo S.A.C", id);
+		Company c = Company.create(1235678978, "922031342", "Jairo S.A.C", id);
 		CompanyService.create(c);
 		
 		System.out.println("---------------------EMPRESA CREADO-------------------------");

@@ -54,11 +54,10 @@ public class Company implements Serializable{
 	public Company() {
 	}
 
-	public static Company create(Integer ruc, String businessName, String phoneNumber, String tradeName, Long userId) {
+	public static Company create(Integer ruc, String phoneNumber, String tradeName, Long userId) {
 		Company obj = new Company();
 
 		obj.ruc = ruc;
-		obj.businessName = businessName;
 		obj.phoneNumber = phoneNumber;
 		obj.tradeName = tradeName;
 		obj.userId = userId;

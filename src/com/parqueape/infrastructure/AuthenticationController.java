@@ -55,8 +55,8 @@ public class AuthenticationController {
 		
 		String message = "El login fue exitoso.";
 
-		return Response.status(200).entity(PresentationUtil.response(message, result)).build();
-
+		return Response.status(200).entity(PresentationUtil.response(message, result))
+				.header("Access-Control-Allow-Origin", "*").build();
 	}
 
 	public static EnumRole getRoleByUser(String email, String password) {
