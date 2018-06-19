@@ -24,10 +24,12 @@ import org.json.JSONObject;
 
 import com.parqueape.application.CompanyService;
 import com.parqueape.application.EmployeeService;
+import com.parqueape.application.ParkingAssignmentService;
 import com.parqueape.application.UserService;
 import com.parqueape.domain.Company;
 import com.parqueape.domain.Employee;
 import com.parqueape.domain.EnumRole;
+import com.parqueape.domain.ParkingAssignment;
 import com.parqueape.domain.User;
 import com.sun.jersey.core.header.FormDataContentDisposition;
 import com.sun.jersey.multipart.FormDataParam;
@@ -53,41 +55,45 @@ public class EmployeeController {
 			@FormParam("typeDoc") String typeDoc,
 			@FormParam("numDoc") String numDoc,
 			@FormParam("photo") String photo,
-			@FormParam("companyId") String companyId
+			@FormParam("companyId") String companyId,
+			@FormParam("garageId") String garage_id
 	) {
 		try {
+			
 			UserService.validateExistUser(email, EnumRole.EMPLOYEE);
-		} catch (Exception e) {
-			return Response.status(400).entity(PresentationUtil.error(e.getMessage()))
-					.build();
-		}
-		DateFormat inputFormat = new SimpleDateFormat("yyyy-MM-dd");
 
-		Date dateEntry;
-		Date dateRetirement;
-
-		try {
+			DateFormat inputFormat = new SimpleDateFormat("yyyy-MM-dd");
+			Date dateEntry;
+			Date dateRetirement;
+			Long garageId;
+			Float salary;
+			EnumTurn turn;
+			
 			dateEntry = inputFormat.parse(init);
 			dateRetirement = inputFormat.parse(finish);
-		} catch (ParseException e) {
-			return Response.status(400).entity(PresentationUtil.response(e.getMessage().toString(), new JSONObject()))
-					.build();
+			garageId = Long.parseLong(garage_id);
+			salary = Float.parseFloat(payment);
+			turn = EnumTurn.getRole(turns);
+
+			User user = User.create(EnumRole.EMPLOYEE, email, password, new Date());
+			Long userId = UserService.create(user);
+
+			Company company = CompanyService.findById(Long.parseLong(companyId));
+
+			Employee employee = Employee.create(dateEntry, salary, dateRetirement, turn, bankAccountNumber, names,
+					lastNames, EnumTypeDoc.getRole(typeDoc), numDoc, photo, company, userId);
+			Long employeeId = EmployeeService.create(employee);
+
+			ParkingAssignment parkingAssignment = ParkingAssignment.create(employeeId, garageId);
+			ParkingAssignmentService.create(parkingAssignment);
+
+			return Response.status(200)
+					.entity(PresentationUtil.response("La empleado se registro correctamente.",
+							new JSONObject().append("id", employeeId)))
+					.header("Access-Control-Allow-Origin", "*").build();
+		} catch (Exception e) {
+			return Response.status(400).entity(PresentationUtil.error(e.getMessage())).build();
 		}
-
-		Float salary = Float.parseFloat(payment);
-		EnumTurn turn = EnumTurn.getRole(turns);
-
-		User user = User.create(EnumRole.EMPLOYEE, email, password, new Date());
-		Long userId = UserService.create(user);
-
-		Company company = CompanyService.findById(Long.parseLong(companyId));
-
-		Employee employee = Employee.create(dateEntry, salary, dateRetirement, turn, bankAccountNumber, names,
-				lastNames, EnumTypeDoc.getRole(typeDoc), numDoc, photo, company, userId);
-		Long employeeId = EmployeeService.create(employee);
-
-		return Response.status(200).entity(PresentationUtil.response("La empleado se registro correctamente.",
-				new JSONObject().append("id", employeeId))).header("Access-Control-Allow-Origin", "*").build();
 	}
 	
 	@PUT
