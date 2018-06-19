@@ -54,14 +54,14 @@ public class CompanyController {
     @Consumes(MediaType.APPLICATION_FORM_URLENCODED)
 	@Produces("application/json")
 	public static Response update(
-			@FormParam("ruc") Integer ruc,
+			@FormParam("ruc") String ruc,
 			@FormParam("phoneNumber") String phoneNumber,
 			@FormParam("tradeName") String tradeName,
 			@PathParam("id") String id
 	) {
 		
 		Company company = CompanyService.findById(Long.parseLong(id));
-		company.setRuc(ruc);
+		company.setRuc(Integer.parseInt(ruc));
 		company.setPhoneNumber(phoneNumber);
 		company.setTradeName(tradeName);
 		CompanyService.update(company);

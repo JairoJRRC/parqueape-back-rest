@@ -40,9 +40,9 @@ public class UserController {
 		System.out.println("---------------------EMPRESA CREADO-------------------------");
 		System.out.println("-------------------------------------------------------------------");
 		
-		Garage g = Garage.create("Garage", "-12.0152211,-77.1114907,13z", "Mz k lt 27 Urb San Martin de Porres, San Juan de Dios, Distrito de Lima 15108", img1, c);	
-		Garage g1 = Garage.create("Garage 2", "-12.0152211,-77.1114907,13z", "LAP - Aeropuerto Internacional Jorge Chávez, Av. Elmer Faucett, Callao 07031", img2, c);	
-		Garage g2 = Garage.create("Garage 3", "-12.0152211,-77.1114907,13z", "Av. Tacna 360, Cercado de Lima 15001", img3, c);	
+		Garage g = Garage.create("Garage", "-12.0152211,-77.1114907,13z", "Mz k lt 27 Urb San Martin de Porres, San Juan de Dios, Distrito de Lima 15108", img1, c, 10, new Float(15.00), "asdasd");	
+		Garage g1 = Garage.create("Garage 2", "-12.0152211,-77.1114907,13z", "LAP - Aeropuerto Internacional Jorge Chávez, Av. Elmer Faucett, Callao 07031", img2, c, 10, new Float(15.00), "asdasd");	
+		Garage g2 = Garage.create("Garage 3", "-12.0152211,-77.1114907,13z", "Av. Tacna 360, Cercado de Lima 15001", img3, c, 10, new Float(15.00), "asdasd");	
 		GarageService.create(g);
 		GarageService.create(g1);
 		GarageService.create(g2);

@@ -14,6 +14,7 @@ import javax.persistence.JoinColumn;
 import javax.persistence.ManyToOne;
 import javax.persistence.OneToMany;
 import javax.persistence.Table;
+import javax.ws.rs.FormParam;
 import javax.xml.bind.annotation.XmlElement;
 import javax.xml.bind.annotation.XmlRootElement;
 
@@ -47,17 +48,29 @@ public class Garage implements Serializable {
 
 	@OneToMany(fetch = FetchType.EAGER, mappedBy = "garage", cascade = CascadeType.ALL)
 	private Collection<Site> sites;
+	
+	@Column
+	private Integer numberSites;
+	
+	@Column
+	private Float pricePerHour;
+	
+	@Column(length = 500)
+	private String description;
 
 	public Garage() {
 	}
 
-	public static Garage create(String title, String coordinates, String address, String photo, Company company) {
+	public static Garage create(String title, String coordinates, String address, String photo, Company company, Integer numberSites, Float pricePerHour, String description) {
 		Garage garage = new Garage();
 		garage.title = title;
 		garage.coordinates = coordinates;
 		garage.address = address;
 		garage.photo = photo;
 		garage.company = company;
+		garage.numberSites = numberSites;
+		garage.pricePerHour = pricePerHour;
+		garage.description = description;
 		return garage;
 	}
 
@@ -109,8 +122,30 @@ public class Garage implements Serializable {
 		this.company = company;
 	}
 
-	
-	
+	public Integer getNumberSites() {
+		return numberSites;
+	}
+
+	public void setNumberSites(Integer numberSites) {
+		this.numberSites = numberSites;
+	}
+
+	public Float getPricePerHour() {
+		return pricePerHour;
+	}
+
+	public void setPricePerHour(Float pricePerHour) {
+		this.pricePerHour = pricePerHour;
+	}
+
+	public String getDescription() {
+		return description;
+	}
+
+	public void setDescription(String description) {
+		this.description = description;
+	}
+
 	public Collection<Site> getSites() {
 		return sites;
 	}
@@ -128,6 +163,9 @@ public class Garage implements Serializable {
     		objGarage.put("coordinates", getCoordinates());
     		objGarage.put("address", getAddress());
     		objGarage.put("photo", getPhoto());
+    		objGarage.put("numberSites", getNumberSites());
+    		objGarage.put("pricePerHour", getPricePerHour());
+    		objGarage.put("description", getDescription());
 
     		if (getSites().size() > 0) {
 

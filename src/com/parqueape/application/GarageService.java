@@ -43,6 +43,9 @@ public class GarageService {
 		g.setPhoto(garage.getPhoto());
 		g.setCompany(garage.getCompany());
 		g.setSites(garage.getSites());
+		g.setNumberSites(garage.getNumberSites());
+		g.setPricePerHour(garage.getPricePerHour());
+		g.setDescription(garage.getDescription());
 		
 		session.getTransaction().commit();
 		session.close();

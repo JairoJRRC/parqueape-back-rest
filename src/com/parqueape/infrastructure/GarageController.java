@@ -21,6 +21,7 @@ import org.json.JSONObject;
 
 import com.parqueape.application.CompanyService;
 import com.parqueape.application.GarageService;
+import com.parqueape.application.SiteService;
 import com.parqueape.domain.Company;
 import com.parqueape.domain.Garage;
 import com.parqueape.domain.Site;
@@ -31,14 +32,39 @@ public class GarageController {
 	@POST
 	@Consumes(MediaType.APPLICATION_FORM_URLENCODED)
 	@Produces("application/json")
-	public static Response register(@FormParam("title") String title, @FormParam("coordinates") String coordinates,
-			@FormParam("address") String address, @FormParam("photo") String photo,
-			@FormParam("companyId") String companyId) {
+	public static Response register(
+			@FormParam("title") String title,
+			@FormParam("coordinates") String coordinates,
+			@FormParam("address") String address,
+			@FormParam("photo") String photo,
+			@FormParam("companyId") String company_id,
+			@FormParam("numberSites") String number_sites,
+			@FormParam("pricePerHour") String price_hour,
+			@FormParam("description") String description
+	) {
+		
+		Long companyId;
+		Integer numberSites;
+		Float pricePerHour;
 
-		Company company = CompanyService.findById(Long.parseLong(companyId));
+		try {
+			companyId = Long.parseLong(company_id);
+			numberSites = Integer.parseInt(number_sites);
+			pricePerHour = Float.parseFloat(price_hour);
+		} catch (Exception e) {
+			return Response.status(400).entity(PresentationUtil.error(e.getMessage()))
+					.header("Access-Control-Allow-Origin", "*").build();
+		}
+		
+		Company company = CompanyService.findById(companyId);
 
-		Garage garage = Garage.create(title, coordinates, address, photo, company);
+		Garage garage = Garage.create(title, coordinates, address, photo, company, numberSites, pricePerHour, description);
 		Long garageId = GarageService.create(garage);
+		
+		for (int i = 0; i < numberSites; i++) {
+			Site site = Site.create("disponible", garage);
+			SiteService.create(site);
+		}
 
 		return Response.status(200).entity(PresentationUtil.response("La cochera fue creada exitosamente.",
 				new JSONObject().append("id", garageId))).header("Access-Control-Allow-Origin", "*").build();
@@ -48,14 +74,39 @@ public class GarageController {
 	@Path("/{id}")
 	@Consumes(MediaType.APPLICATION_FORM_URLENCODED)
 	@Produces("application/json")
-	public static Response update(@FormParam("title") String title, @FormParam("coordinates") String coordinates,
-			@FormParam("address") String address, @FormParam("photo") String photo, @PathParam("id") String id) {
+	public static Response update( 
+			@FormParam("title") String title,
+			@FormParam("coordinates") String coordinates,
+			@FormParam("address") String address,
+			@FormParam("photo") String photo,
+			@FormParam("companyId") String company_id,
+			@FormParam("numberSites") String number_sites,
+			@FormParam("pricePerHour") String price_hour,
+			@FormParam("description") String description,
+			@PathParam("id") String id
+	) {
 
-		Garage garage = GarageService.findById(Long.parseLong(id));
+		Long garageId;
+		Integer numberSites;
+		Float pricePerHour;
+
+		try {
+			garageId = Long.parseLong(id);
+			numberSites = Integer.parseInt(number_sites);
+			pricePerHour = Float.parseFloat(price_hour);
+		} catch (Exception e) {
+			return Response.status(400).entity(PresentationUtil.error(e.getMessage()))
+					.header("Access-Control-Allow-Origin", "*").build();
+		}
+		
+		Garage garage = GarageService.findById(garageId);
 		garage.setTitle(title);
 		garage.setCoordinates(coordinates);
 		garage.setAddress(address);
 		garage.setPhoto(photo);
+		garage.setNumberSites(numberSites);
+		garage.setPricePerHour(pricePerHour);
+		garage.setDescription(description);
 		GarageService.update(garage);
 
 		return Response.status(200)

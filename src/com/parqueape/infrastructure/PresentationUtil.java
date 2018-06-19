@@ -11,4 +11,12 @@ public class PresentationUtil {
         
         return obj.toString();
 	}
+	
+	public static String error(String message) {
+		JSONObject obj = new JSONObject();
+    	
+        obj.put("message", message);
+        
+        return obj.toString();
+	}
 }
