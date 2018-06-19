@@ -1,13 +1,18 @@
 package com.parqueape.application;
 
+import java.text.ParseException;
 import java.util.List;
 
+import javax.ws.rs.core.Response;
+
 import org.hibernate.Session;
+import org.json.JSONObject;
 import org.hibernate.Query;
 
 import com.parqueape.domain.EnumRole;
 import com.parqueape.domain.User;
 import com.parqueape.infrastructure.HibernateUtil;
+import com.parqueape.infrastructure.PresentationUtil;
 
 public class UserService {
 
@@ -92,5 +97,16 @@ public class UserService {
 		
 		return result;
 	}
+	
+	public static void validateExistUser(String email, EnumRole role) throws Exception {
+		Session session = HibernateUtil.getSessionFactory().openSession();
+		session.beginTransaction();
+		Query query = session.createQuery("from User where email = :email and role = :role");
+		query.setParameter("email", email);
+		query.setParameter("role", role);
 
+		if (query.uniqueResult() != null) {
+			throw new Exception("El usuario ya existe.");
+		}
+	}
 }

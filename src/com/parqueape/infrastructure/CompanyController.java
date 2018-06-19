@@ -14,6 +14,7 @@ import javax.ws.rs.Produces;
 import javax.ws.rs.core.MediaType;
 import javax.ws.rs.core.Response;
 
+import org.hibernate.EntityMode;
 import org.json.JSONObject;
 
 import com.parqueape.application.CompanyService;
@@ -38,7 +39,12 @@ public class CompanyController {
 			@FormParam("phoneNumber") String phoneNumber,
 			@FormParam("tradeName") String tradeName
 	) {
-		
+		try {
+			UserService.validateExistUser(email, EnumRole.COMPANY);
+		} catch (Exception e) {
+			return Response.status(400).entity(PresentationUtil.error(e.getMessage()))
+					.build();
+		}
 		user = User.create(EnumRole.COMPANY, email, password, new Date());
 		Long userId = UserService.create(user);
 		

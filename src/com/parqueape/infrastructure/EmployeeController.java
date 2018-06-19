@@ -55,6 +55,12 @@ public class EmployeeController {
 			@FormParam("photo") String photo,
 			@FormParam("companyId") String companyId
 	) {
+		try {
+			UserService.validateExistUser(email, EnumRole.EMPLOYEE);
+		} catch (Exception e) {
+			return Response.status(400).entity(PresentationUtil.error(e.getMessage()))
+					.build();
+		}
 		DateFormat inputFormat = new SimpleDateFormat("yyyy-MM-dd");
 
 		Date dateEntry;

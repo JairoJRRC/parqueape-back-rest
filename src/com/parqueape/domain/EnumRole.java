@@ -15,6 +15,9 @@ public enum EnumRole {
 	        case "COMPANY":
 	        	response = EnumRole.COMPANY;
 	            break;
+	        case "EMPLOYEE":
+	        	response = EnumRole.EMPLOYEE;
+	            break;
 	    }
 	    
 	    return response;
@@ -29,6 +32,9 @@ public enum EnumRole {
 	            break;
 	        case COMPANY:
 	        	response = "COMPANY";
+	            break;
+	        case EMPLOYEE:
+	        	response = "EMPLOYEE";
 	            break;
 	    }
 	    
