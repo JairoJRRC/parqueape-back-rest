@@ -18,5 +18,6 @@
    <mapping class="com.parqueape.domain.Site"/>
    <mapping class="com.parqueape.domain.Employee"/>
    <mapping class="com.parqueape.domain.ParkingAssignment"/>
+   <mapping class="com.parqueape.domain.Reservation"/>
 </session-factory>
 </hibernate-configuration>

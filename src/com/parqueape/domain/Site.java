@@ -1,14 +1,18 @@
 package com.parqueape.domain;
 
 import java.io.Serializable;
+import java.util.Collection;
 
+import javax.persistence.CascadeType;
 import javax.persistence.Column;
 import javax.persistence.Entity;
+import javax.persistence.FetchType;
 import javax.persistence.GeneratedValue;
 import javax.persistence.GenerationType;
 import javax.persistence.Id;
 import javax.persistence.JoinColumn;
 import javax.persistence.ManyToOne;
+import javax.persistence.OneToMany;
 import javax.persistence.Table;
 import javax.xml.bind.annotation.XmlElement;
 import javax.xml.bind.annotation.XmlRootElement;
@@ -30,6 +34,9 @@ public class Site implements Serializable {
 	@Column(length = 20)
 	@XmlElement(name = "status")
 	private String status;
+	
+	@OneToMany(fetch = FetchType.EAGER, mappedBy = "site", cascade = CascadeType.ALL)
+	private Collection<Reservation> reservations;
 
 	public Site() {
 	}
@@ -65,6 +72,14 @@ public class Site implements Serializable {
 
 	public void setStatus(String status) {
 		this.status = status;
+	}
+
+	public Collection<Reservation> getReservations() {
+		return reservations;
+	}
+
+	public void setReservations(Collection<Reservation> reservations) {
+		this.reservations = reservations;
 	}
 
 }
