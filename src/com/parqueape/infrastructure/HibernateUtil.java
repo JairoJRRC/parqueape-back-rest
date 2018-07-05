@@ -3,6 +3,7 @@ package com.parqueape.infrastructure;
 import org.hibernate.SessionFactory;
 import org.hibernate.boot.registry.StandardServiceRegistryBuilder;
 import org.hibernate.cfg.Configuration;
+import org.hibernate.cfg.ImprovedNamingStrategy;
 
 @SuppressWarnings("deprecation")
 public class HibernateUtil {
@@ -11,7 +12,9 @@ public class HibernateUtil {
 	
 	static{
 		try{
-			Configuration configuration = new Configuration().configure();
+			Configuration configuration = new Configuration()
+					.setNamingStrategy(ImprovedNamingStrategy.INSTANCE)
+					.configure();
 			StandardServiceRegistryBuilder builder = new StandardServiceRegistryBuilder()
 					.applySettings(configuration.getProperties());
 			HibernateUtil.sessionFactory = configuration.buildSessionFactory(builder.build());

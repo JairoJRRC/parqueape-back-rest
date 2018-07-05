@@ -216,27 +216,52 @@ public class Employee implements Serializable{
 	}
 	
 	public JSONObject getObject() {
-        try {
-        	
-        	JSONObject obj = new JSONObject();
-        	obj.put("id",getId());
-			obj.put("dateEntry",getDateEntry());
-			obj.put("salary",getSalary());
-			obj.put("dateRetirement",getDateRetirement());
-			obj.put("state",getState());
-			obj.put("turn",getTurn());
-			obj.put("bankAccountNumber",getBankAccountNumber());
-			obj.put("names",getNames());
-			obj.put("lastNames",getLastNames());
-			obj.put("typeDoc",getTypeDoc());
-			obj.put("numDoc",getNumDoc());
-			obj.put("photo",getPhoto());
-			obj.put("companyId",getCompany().getId());
-			obj.put("userId",getUserId());
-            
-            return new JSONObject().put("employee", obj);
-        } catch (JSONException e) {
-                return null;
-        }
-}
+		try {
+
+			JSONObject obj = new JSONObject();
+			obj.put("id", getId());
+			obj.put("dateEntry", getDateEntry());
+			obj.put("salary", getSalary());
+			obj.put("dateRetirement", getDateRetirement());
+			obj.put("state", getState());
+			obj.put("turn", getTurn());
+			obj.put("bankAccountNumber", getBankAccountNumber());
+			obj.put("names", getNames());
+			obj.put("lastNames", getLastNames());
+			obj.put("typeDoc", getTypeDoc());
+			obj.put("numDoc", getNumDoc());
+			obj.put("photo", getPhoto());
+			obj.put("companyId", getCompany().getId());
+			obj.put("userId", getUserId());
+
+			return new JSONObject().put("employee", obj);
+		} catch (JSONException e) {
+			return null;
+		}
+	}
+	
+	public JSONObject getObjectList() {
+		try {
+
+			JSONObject obj = new JSONObject();
+			obj.put("id", getId());
+			obj.put("dateEntry", getDateEntry());
+			obj.put("salary", getSalary());
+			obj.put("dateRetirement", getDateRetirement());
+			obj.put("state", getState());
+			obj.put("turn", getTurn());
+			obj.put("bankAccountNumber", getBankAccountNumber());
+			obj.put("names", getNames());
+			obj.put("lastNames", getLastNames());
+			obj.put("typeDoc", getTypeDoc());
+			obj.put("numDoc", getNumDoc());
+			obj.put("photo", getPhoto());
+			obj.put("companyId", getCompany().getId());
+			obj.put("userId", getUserId());
+
+			return obj;
+		} catch (JSONException e) {
+			return null;
+		}
+	}
 }

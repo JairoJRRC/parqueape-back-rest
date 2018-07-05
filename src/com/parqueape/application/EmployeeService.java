@@ -8,6 +8,7 @@ import org.json.JSONObject;
 
 import com.parqueape.domain.Company;
 import com.parqueape.domain.Employee;
+import com.parqueape.domain.Garage;
 import com.parqueape.domain.User;
 import com.parqueape.infrastructure.HibernateUtil;
 
@@ -41,7 +42,6 @@ public class EmployeeService extends AuthenticationFactory {
 		c.setDateEntry(emp.getDateEntry());
 		c.setSalary(emp.getSalary());
 		c.setDateRetirement(emp.getDateRetirement());
-		c.setState(emp.getState());
 		c.setTurn(emp.getTurn());
 		c.setBankAccountNumber(emp.getBankAccountNumber());
 		c.setNames(emp.getNames());
@@ -49,7 +49,6 @@ public class EmployeeService extends AuthenticationFactory {
 		c.setTypeDoc(emp.getTypeDoc());
 		c.setNumDoc(emp.getNumDoc());
 		c.setPhoto(emp.getPhoto());
-		c.setCompany(emp.getCompany());
 		
 		session.getTransaction().commit();
 		session.close();
@@ -69,7 +68,7 @@ public class EmployeeService extends AuthenticationFactory {
 	public static Employee findById(Long id) {
 		Session session = HibernateUtil.getSessionFactory().openSession();
 		session.beginTransaction();
-		Employee c = (Employee) session.load(Employee.class, id);
+		Employee c = (Employee) session.get(Employee.class, id);
 		session.close();
 		return c;
 	}
@@ -84,6 +83,17 @@ public class EmployeeService extends AuthenticationFactory {
 		Employee employee= (Employee) query.uniqueResult();
 		
 		return employee;
+	}
+	
+	public static List<Employee> getEmployeesByCompany(Long companyId) {
+		Session session = HibernateUtil.getSessionFactory().openSession();
+		@SuppressWarnings("unchecked")
+		Query query = session.createQuery("from Employee where company.id = :companyId");
+		query.setParameter("companyId", companyId);
+		List<Employee> employees = query.list();
+		session.close();
+		System.out.println("Encontrados: " + employees.size() + " Empleados");
+		return employees;
 	}
 
 	@Override
