@@ -22,6 +22,8 @@ import org.json.JSONArray;
 import org.json.JSONException;
 import org.json.JSONObject;
 
+import com.parqueape.infrastructure.EnumStatusSite;
+
 @Entity
 @Table(name = "TB_COCHERA")
 public class Garage implements Serializable {
@@ -155,6 +157,11 @@ public class Garage implements Serializable {
 	}
 	
 	public JSONObject getObject() {
+		
+		int availableSite = 0;
+		int busySite = 0;
+		int reservedSite = 0;
+		
         try {
         	
         	JSONObject objGarage = new JSONObject();
@@ -177,7 +184,23 @@ public class Garage implements Serializable {
     				objSite.put("status", site.getStatus());
 
     				arrSite.put(objSite);
+    				
+    				if(site.getStatus().equals(EnumStatusSite.AVAILABLE.toString())) {
+    					availableSite++;
+    				}
+    				
+    				if(site.getStatus().equals(EnumStatusSite.BUSY.toString())) {
+    					busySite++;
+    				}
+    				
+    				if(site.getStatus().equals(EnumStatusSite.RESERVED.toString())) {
+    					reservedSite++;
+    				}
     			}
+    			
+    			objGarage.put("availableSite", availableSite);
+        		objGarage.put("busySite", busySite);
+        		objGarage.put("reservedSite", reservedSite);
 
     			objGarage.put("sites", arrSite);
     		}

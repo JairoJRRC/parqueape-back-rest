@@ -62,7 +62,7 @@ public class GarageController {
 		Long garageId = GarageService.create(garage);
 		
 		for (int i = 0; i < numberSites; i++) {
-			Site site = Site.create("disponible", garage);
+			Site site = Site.create(garage);
 			SiteService.create(site);
 		}
 
@@ -104,7 +104,6 @@ public class GarageController {
 		garage.setCoordinates(coordinates);
 		garage.setAddress(address);
 		garage.setPhoto(photo);
-		garage.setNumberSites(numberSites);
 		garage.setPricePerHour(pricePerHour);
 		garage.setDescription(description);
 		GarageService.update(garage);

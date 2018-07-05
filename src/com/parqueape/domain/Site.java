@@ -17,14 +17,14 @@ import javax.persistence.Table;
 import javax.xml.bind.annotation.XmlElement;
 import javax.xml.bind.annotation.XmlRootElement;
 
+import com.parqueape.infrastructure.EnumStatusSite;
+
 @Entity
 @Table(name = "TB_SITIO")
-@XmlRootElement
 public class Site implements Serializable {
 
 	@Id
 	@GeneratedValue(strategy = GenerationType.IDENTITY)
-	@XmlElement(name = "id")
 	private Long id;
 
 	@ManyToOne
@@ -32,8 +32,7 @@ public class Site implements Serializable {
 	private Garage garage;
 
 	@Column(length = 20)
-	@XmlElement(name = "status")
-	private String status;
+	private EnumStatusSite status;
 	
 	@OneToMany(fetch = FetchType.EAGER, mappedBy = "site", cascade = CascadeType.ALL)
 	private Collection<Reservation> reservations;
@@ -41,11 +40,11 @@ public class Site implements Serializable {
 	public Site() {
 	}
 
-	public static Site create(String status, Garage garage) {
+	public static Site create(Garage garage) {
 		Site site = new Site();
 
 		site.garage = garage;
-		site.status = status;
+		site.status = EnumStatusSite.AVAILABLE;
 
 		return site;
 	}
@@ -65,12 +64,12 @@ public class Site implements Serializable {
 	public void setGarage(Garage garage) {
 		this.garage = garage;
 	}
-
-	public String getStatus() {
+	
+	public EnumStatusSite getStatus() {
 		return status;
 	}
 
-	public void setStatus(String status) {
+	public void setStatus(EnumStatusSite status) {
 		this.status = status;
 	}
 

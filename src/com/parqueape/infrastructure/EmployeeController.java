@@ -9,10 +9,12 @@ import java.text.DateFormat;
 import java.text.ParseException;
 import java.text.SimpleDateFormat;
 import java.util.Date;
+import java.util.List;
 
 import javax.ws.rs.Consumes;
 import javax.ws.rs.DefaultValue;
 import javax.ws.rs.FormParam;
+import javax.ws.rs.GET;
 import javax.ws.rs.POST;
 import javax.ws.rs.PUT;
 import javax.ws.rs.Path;
@@ -20,6 +22,8 @@ import javax.ws.rs.PathParam;
 import javax.ws.rs.Produces;
 import javax.ws.rs.core.MediaType;
 import javax.ws.rs.core.Response;
+
+import org.json.JSONArray;
 import org.json.JSONObject;
 
 import com.parqueape.application.CompanyService;
@@ -29,6 +33,7 @@ import com.parqueape.application.UserService;
 import com.parqueape.domain.Company;
 import com.parqueape.domain.Employee;
 import com.parqueape.domain.EnumRole;
+import com.parqueape.domain.Garage;
 import com.parqueape.domain.ParkingAssignment;
 import com.parqueape.domain.User;
 import com.sun.jersey.core.header.FormDataContentDisposition;
@@ -61,7 +66,7 @@ public class EmployeeController {
 		try {
 			
 			UserService.validateExistUser(email, EnumRole.EMPLOYEE);
-
+		
 			DateFormat inputFormat = new SimpleDateFormat("yyyy-MM-dd");
 			Date dateEntry;
 			Date dateRetirement;
@@ -71,6 +76,7 @@ public class EmployeeController {
 			
 			dateEntry = inputFormat.parse(init);
 			dateRetirement = inputFormat.parse(finish);
+			
 			garageId = Long.parseLong(garage_id);
 			salary = Float.parseFloat(payment);
 			turn = EnumTurn.getRole(turns);
@@ -94,6 +100,7 @@ public class EmployeeController {
 		} catch (Exception e) {
 			return Response.status(400).entity(PresentationUtil.error(e.getMessage())).build();
 		}
+		
 	}
 	
 	@PUT
@@ -104,7 +111,6 @@ public class EmployeeController {
 			@FormParam("dateEntry") String init,
 			@FormParam("salary") String payment,
 			@FormParam("dateRetirement") String finish,
-			@FormParam("state") String state,
 			@FormParam("turn") String turns,
 			@FormParam("bankAccountNumber") String bankAccountNumber,
 			@FormParam("names") String names,
@@ -112,46 +118,39 @@ public class EmployeeController {
 			@FormParam("typeDoc") String typeDoc,
 			@FormParam("numDoc") String numDoc,
 			@FormParam("photo") String photo,
-			@FormParam("companyId") String companyId,
 			@PathParam("id") String id
 	) {
-
-		DateFormat inputFormat = new SimpleDateFormat("yyyy-MM-dd");
-
-		Date dateEntry;
-		Date dateRetirement;
-
 		try {
+			DateFormat inputFormat = new SimpleDateFormat("yyyy-MM-dd");
+
+			Date dateEntry;
+			Date dateRetirement;
+
 			dateEntry = inputFormat.parse(init);
 			dateRetirement = inputFormat.parse(finish);
-		} catch (ParseException e) {
-			return Response.status(400).entity(PresentationUtil.response(e.getMessage().toString(), new JSONObject()))
-					.build();
+
+			Employee employee = EmployeeService.findById(Long.parseLong(id));
+			employee.setDateEntry(dateEntry);
+			employee.setSalary(Float.parseFloat(payment));
+			employee.setDateRetirement(dateRetirement);
+			employee.setTurn(EnumTurn.getRole(turns));
+			employee.setBankAccountNumber(bankAccountNumber);
+			employee.setNames(names);
+			employee.setLastNames(lastNames);
+			employee.setTypeDoc(EnumTypeDoc.getRole(typeDoc));
+			employee.setNumDoc(numDoc);
+			employee.setPhoto(photo);
+
+			EmployeeService.update(employee);
+
+			return Response.status(200)
+					.entity(PresentationUtil.response("El empleado fue actualizado correctamente.",
+							new JSONObject().append("id", employee.getId())))
+					.header("Access-Control-Allow-Origin", "*").build();
+		} catch (Exception e) {
+			return Response.status(400).entity(PresentationUtil.error(e.getMessage())).build();
 		}
-		
-		Employee employee = EmployeeService.findById(Long.parseLong(id));
-		System.out.println("se obtuvo empleado");
-		System.out.println(employee.getBankAccountNumber());
-		employee.setDateEntry(dateEntry);
-		employee.setSalary(Float.parseFloat(payment));
-		employee.setDateRetirement(dateRetirement);
-		employee.setState(EnumState.getRole(turns));
-		employee.setTurn(EnumTurn.getRole(turns));
-		employee.setBankAccountNumber(bankAccountNumber);
-		employee.setNames(names);
-		employee.setLastNames(lastNames);
-		employee.setTypeDoc(EnumTypeDoc.getRole(typeDoc));
-		employee.setNumDoc(numDoc);
-		employee.setPhoto(photo);
-		System.out.println("se seteo empleado");
-		System.out.println(bankAccountNumber);
-		EmployeeService.update(employee);
-		System.out.println("Se actualizo.");
-		
-		return Response.status(200)
-				.entity(PresentationUtil.response("El empleado fue actualizado correctamente.",
-						new JSONObject().append("id", employee.getId())))
-				.header("Access-Control-Allow-Origin", "*").build();		
+
 	}
 
 	@POST
@@ -180,6 +179,40 @@ public class EmployeeController {
 		return Response.status(200).entity(PresentationUtil.response("La imagen se ha subido correctamente.", path))
 				.header("Access-Control-Allow-Origin", "*").build();
 
+	}
+	
+	@GET
+	@Path("/company/{companyId}")
+    @Consumes(MediaType.APPLICATION_FORM_URLENCODED)
+	@Produces("application/json")
+	public static Response getEmployeesByCompanyId(
+			@PathParam("companyId") String companyId
+	) {
+		List<Employee> employees = EmployeeService.getEmployeesByCompany(Long.parseLong(companyId));
+
+		JSONArray arrEmployee = new JSONArray();
+		if (employees.size() > 0) {
+			for (Employee employee : employees) {
+				arrEmployee.put(employee.getObjectList());
+			}
+		}
+
+		return Response.status(200)
+				.entity(PresentationUtil.response("Se obtuvo correctamente los empleados.",
+						new JSONObject().put("employees", arrEmployee)))
+				.header("Access-Control-Allow-Origin", "*").build();
+	}
+	
+	@GET
+	@Path("/{id}")
+    @Consumes(MediaType.APPLICATION_FORM_URLENCODED)
+	@Produces("application/json")
+	public static Response get(@PathParam("id") String id) {
+		Employee employe = EmployeeService.findById(Long.parseLong(id));
+		JSONObject result = employe.getObject();
+
+		return Response.status(200).entity(PresentationUtil.response("Se obtuvo correctamente al empleado.", result))
+				.header("Access-Control-Allow-Origin", "*").build();
 	}
 
 	private void writeToFile(InputStream uploadedInputStream, String uploadedFileLocation) {
