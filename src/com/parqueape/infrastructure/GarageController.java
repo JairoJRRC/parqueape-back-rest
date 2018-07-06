@@ -1,5 +1,6 @@
 package com.parqueape.infrastructure;
 
+import java.util.ArrayList;
 import java.util.Date;
 import java.util.List;
 
@@ -21,9 +22,11 @@ import org.json.JSONObject;
 
 import com.parqueape.application.CompanyService;
 import com.parqueape.application.GarageService;
+import com.parqueape.application.ParkingAssignmentService;
 import com.parqueape.application.SiteService;
 import com.parqueape.domain.Company;
 import com.parqueape.domain.Garage;
+import com.parqueape.domain.ParkingAssignment;
 import com.parqueape.domain.Site;
 
 @Path("/garage")
@@ -40,15 +43,17 @@ public class GarageController {
 			@FormParam("companyId") String company_id,
 			@FormParam("numberSites") String number_sites,
 			@FormParam("pricePerHour") String price_hour,
-			@FormParam("description") String description
+			@FormParam("description") String description,
+			@FormParam("employeeId") String _employeeId
 	) {
 		
 		Long companyId;
 		Integer numberSites;
 		Float pricePerHour;
-
+		Long employeeId;
 		try {
 			companyId = Long.parseLong(company_id);
+			employeeId = Long.parseLong(_employeeId);
 			numberSites = Integer.parseInt(number_sites);
 			pricePerHour = Float.parseFloat(price_hour);
 		} catch (Exception e) {
@@ -61,6 +66,9 @@ public class GarageController {
 		Garage garage = Garage.create(title, coordinates, address, photo, company, numberSites, pricePerHour, description);
 		Long garageId = GarageService.create(garage);
 		
+		ParkingAssignment parkingAssignment = ParkingAssignment.create(employeeId, garageId);
+		ParkingAssignmentService.create(parkingAssignment);
+		
 		for (int i = 0; i < numberSites; i++) {
 			Site site = Site.create(garage);
 			SiteService.create(site);
@@ -70,7 +78,51 @@ public class GarageController {
 				new JSONObject().append("id", garageId))).header("Access-Control-Allow-Origin", "*").build();
 	}
 
-	@PUT
+//	@PUT
+//	@Path("/{id}")
+//	@Consumes(MediaType.APPLICATION_FORM_URLENCODED)
+//	@Produces("application/json")
+//	public static Response update( 
+//			@FormParam("title") String title,
+//			@FormParam("coordinates") String coordinates,
+//			@FormParam("address") String address,
+//			@FormParam("photo") String photo,
+//			@FormParam("companyId") String company_id,
+//			@FormParam("numberSites") String number_sites,
+//			@FormParam("pricePerHour") String price_hour,
+//			@FormParam("description") String description,
+//			@PathParam("id") String id
+//	) {
+//
+//		Long garageId;
+//		Integer numberSites;
+//		Float pricePerHour;
+//
+//		try {
+//			garageId = Long.parseLong(id);
+//			numberSites = Integer.parseInt(number_sites);
+//			pricePerHour = Float.parseFloat(price_hour);
+//		} catch (Exception e) {
+//			return Response.status(400).entity(PresentationUtil.error(e.getMessage()))
+//					.header("Access-Control-Allow-Origin", "*").build();
+//		}
+//		
+//		Garage garage = GarageService.findById(garageId);
+//		garage.setTitle(title);
+//		garage.setCoordinates(coordinates);
+//		garage.setAddress(address);
+//		garage.setPhoto(photo);
+//		garage.setPricePerHour(pricePerHour);
+//		garage.setDescription(description);
+//		GarageService.update(garage);
+//
+//		return Response.status(200)
+//				.entity(PresentationUtil.response("La cochera se actualizo correctamente.",
+//						new JSONObject().append("id", garage.getId())))
+//				.header("Access-Control-Allow-Origin", "*").build();
+//	}
+	
+	@POST
 	@Path("/{id}")
 	@Consumes(MediaType.APPLICATION_FORM_URLENCODED)
 	@Produces("application/json")
@@ -147,6 +199,36 @@ public class GarageController {
 
 		return Response.status(200).entity(PresentationUtil.response("Se obtuvo la lista de cocheras correctamente.",
 				new JSONObject().put("garages", arrGarage))).header("Access-Control-Allow-Origin", "*").build();
+	}
+	
+	
+	
+	@GET
+	@Path("/employee/{employeeId}")
+	@Consumes(MediaType.APPLICATION_FORM_URLENCODED)
+	@Produces("application/json")
+	public static Response getByEmployeeId(
+			@PathParam("employeeId") String _employeeId
+			) {
+		
+		Long employeeId = Long.parseLong(_employeeId);
+		List<ParkingAssignment> parkingAssignments = ParkingAssignmentService.findByEmployeId(employeeId);
+		List<Garage> garages = new ArrayList<Garage>();
+		
+		for (ParkingAssignment parkingAssignment : parkingAssignments) {
+			Garage garage = GarageService.findById(parkingAssignment.getGarageId());
+			garages.add(garage);
+		}
+
+		JSONArray arrGarage = new JSONArray();
+		if (garages.size() > 0) {
+			for (Garage gar : garages) {
+				arrGarage.put(gar.getObject());
+			}
+
+		}
+
+		return Response.status(200).entity(PresentationUtil.response("Se obtuvo la lista de cocheras correctamente.", arrGarage)).header("Access-Control-Allow-Origin", "*").build();
 	}
 	
 	@DELETE

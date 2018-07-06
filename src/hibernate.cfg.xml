@@ -6,9 +6,9 @@
    <session-factory>
    <property name="hibernate.dialect">org.hibernate.dialect.MySQLDialect</property>
    <property name="hibernate.connection.driver_class">com.mysql.jdbc.Driver</property>
-    <property name="hibernate.connection.url">jdbc:mysql://us-cdbr-iron-east-04.cleardb.net/heroku_7adf0cf91f761e3?reconnect=true</property>
-   <property name="hibernate.connection.username">b9b7d8e804c9e2</property>
-   <property name="hibernate.connection.password">8ee4c067</property>
+    <property name="hibernate.connection.url">jdbc:mysql://localhost:3306/db_parqueape?useSSL=false</property>
+   <property name="hibernate.connection.username">root</property>
+   <property name="hibernate.connection.password"></property>
    <property name="hibernate.current_session_context_class">thread</property>
    <!-- <property name="hibernate.hbm2ddl.auto">create-drop</property> -->
    <property name="show_sql">true</property>

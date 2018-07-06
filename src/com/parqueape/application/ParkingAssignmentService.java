@@ -18,8 +18,6 @@ public class ParkingAssignmentService {
 		return c.getId();
 	}
 
-	
-
 	public static void delete(Long id) {
 		Session session = HibernateUtil.getSessionFactory().openSession();
 		session.beginTransaction();

@@ -10,12 +10,14 @@ import javax.ws.rs.Path;
 import com.parqueape.application.CompanyService;
 import com.parqueape.application.EmployeeService;
 import com.parqueape.application.GarageService;
+import com.parqueape.application.ParkingAssignmentService;
 import com.parqueape.application.SiteService;
 import com.parqueape.application.UserService;
 import com.parqueape.domain.Company;
 import com.parqueape.domain.Employee;
 import com.parqueape.domain.EnumRole;
 import com.parqueape.domain.Garage;
+import com.parqueape.domain.ParkingAssignment;
 import com.parqueape.domain.Site;
 import com.parqueape.domain.User;
 
@@ -41,30 +43,6 @@ public class UserController {
 		System.out.println("---------------------EMPRESA CREADO-------------------------");
 		System.out.println("-------------------------------------------------------------------");
 		
-		List<Garage> listGarage = new ArrayList<Garage>();
-		listGarage = getListGarage(c);
-		
-		for (Garage garage : listGarage) {
-			GarageService.create(garage);
-			Site s = Site.create(garage);
-			
-			for(int i = 0 ; i<garage.getNumberSites() ; i++) {
-				SiteService.create(s);
-			}
-		}
-		
-		System.out.println("---------------------GARAGE CREADO-------------------------");
-		System.out.println("-------------------------------------------------------------------");
-		
-		
-		
-		
-		System.out.println("---------------------SITIO CREADO-------------------------");
-		System.out.println("-------------------------------------------------------------------");
-		
-		//-------------------------------------------------------------------------------------------------
-		
-		
 		User us1 = User.create(EnumRole.EMPLOYEE, "emp1@yopmail.com", "123456", new Date());
 		Long id1 = UserService.create(us1);
 		User us2 = User.create(EnumRole.EMPLOYEE, "emp2@yopmail.com", "123456", new Date());
@@ -81,6 +59,44 @@ public class UserController {
 		
 		System.out.println("---------------------EMPLEADO CREADO-------------------------");
 		System.out.println("-------------------------------------------------------------------");
+		
+		List<Garage> listGarage = new ArrayList<Garage>();
+		listGarage = getListGarage(c);
+		int count = 0;
+		for (Garage garage : listGarage) {
+			GarageService.create(garage);
+			Site s = Site.create(garage);
+			
+			for(int i = 0 ; i<garage.getNumberSites() ; i++) {
+				SiteService.create(s);
+			}
+			count++;
+			if(count%2 == 0) {
+				ParkingAssignment parkingAssignment = ParkingAssignment.create(emp1.getId(), garage.getId());
+				ParkingAssignmentService.create(parkingAssignment);
+			} else if (count%3 == 0) {
+				ParkingAssignment parkingAssignment = ParkingAssignment.create(emp2.getId(), garage.getId());
+				ParkingAssignmentService.create(parkingAssignment);
+			} else {
+				ParkingAssignment parkingAssignment = ParkingAssignment.create(emp3.getId(), garage.getId());
+				ParkingAssignmentService.create(parkingAssignment);
+			}
+			
+		}
+		
+		System.out.println("---------------------GARAGE CREADO-------------------------");
+		System.out.println("-------------------------------------------------------------------");
+		
+		
+		
+		
+		System.out.println("---------------------SITIO CREADO-------------------------");
+		System.out.println("-------------------------------------------------------------------");
+		
+		//-------------------------------------------------------------------------------------------------
+		
+		
+	
 		return "ok";
 	}
 	
